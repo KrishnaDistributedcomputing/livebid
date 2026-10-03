@@ -1,7 +1,7 @@
 ---
 title: LiveBid
 description: Interactive live-commerce marketplace prototype with a production Docker image
-ms.date: 2026-10-02
+ms.date: 2026-10-03
 ms.topic: overview
 ---
 
@@ -28,6 +28,35 @@ runtime, a health endpoint, and a Docker Compose configuration.
 > users, PostgreSQL, Redis, payments, shipping, or a streaming provider. Do not
 > use it to process real bids or purchases.
 
+## Documentation
+
+| Guide                                      | Purpose                                                        |
+|--------------------------------------------|----------------------------------------------------------------|
+| [User guide](docs/user-guide.md)           | Walk through discovery, bidding, shopping, orders, and studio   |
+| [Architecture](docs/architecture.md)       | Review the current prototype and planned platform architecture  |
+| [Deployment guide](docs/deployment.md)     | Run and publish LiveBid with Vercel, Docker, GHCR, or Azure      |
+
+## Architecture at a glance
+
+The current release is a client-side prototype delivered by one Next.js
+application. React owns the demo state in memory, while the health route
+provides a deployment probe.
+
+```mermaid
+flowchart LR
+    User["Buyer or seller"] --> Browser["Web browser"]
+    Browser --> Next["Next.js application"]
+    Next --> UI["React LiveBid interface"]
+    Next --> Health["GET /api/health"]
+    UI --> Memory["In-memory demo state"]
+    Next --> Media["Local and remote images"]
+```
+
+The planned marketplace adds server-authoritative auctions, persistent data,
+realtime delivery, streaming, payments, and shipping. See the
+[architecture guide](docs/architecture.md) for the current component model,
+interaction sequence, delivery pipeline, and target platform boundary.
+
 ## Technology
 
 | Layer            | Implementation                         |
@@ -44,7 +73,7 @@ runtime, a health endpoint, and a Docker Compose configuration.
 ```text
 livebid/
 |-- .github/workflows/       Container build and GHCR publishing
-|-- docs/                    Detailed deployment instructions
+|-- docs/                    Architecture, user, and deployment guides
 |-- public/                  Static product media
 |-- src/
 |   |-- app/                 Next.js routes, layout, styles, and health API
@@ -239,7 +268,7 @@ ghcr.io/krishnadistributedcomputing/livebid:main
 ghcr.io/krishnadistributedcomputing/livebid:sha-<commit>
 ```
 
-See [Deployment guide](docs/deployment.md) for GitHub Container Registry,
+See the [deployment guide](docs/deployment.md) for GitHub Container Registry,
 Vercel, Linux Docker hosts, and Azure Container Apps instructions.
 
 ## Container design
