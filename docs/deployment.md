@@ -13,6 +13,10 @@ estimated_reading_time: 12
 
 ## Choose a deployment path
 
+For a first local run, use the
+[Docker quickstart](docker-quickstart.md). Return here when you are ready to
+publish an image or deploy to a shared environment.
+
 | Goal                                  | Recommended path                     |
 |---------------------------------------|--------------------------------------|
 | Preview the visual interface          | Vercel with external data services   |
