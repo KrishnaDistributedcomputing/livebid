@@ -1,0 +1,12 @@
+services:
+  livebid:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: livebid-web:local
+    ports:
+      - "${LIVEBID_PORT:-3001}:3000"
+    environment:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: "1"
+    restart: unless-stopped

@@ -1,0 +1,10 @@
+services:
+  livebid:
+    image: ${LIVEBID_IMAGE:-ghcr.io/krishnadistributedcomputing/livebid:latest}
+    pull_policy: always
+    ports:
+      - "${LIVEBID_PORT:-3001}:3000"
+    environment:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: "1"
+    restart: unless-stopped
