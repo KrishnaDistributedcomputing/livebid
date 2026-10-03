@@ -44,6 +44,7 @@ Copilot must not report success until:
 * The application and worker remain running
 * `/api/health` returns HTTP 200 with both dependency checks set to `true`
 * Account registration and login work over HTTPS
+* An administrator can sign in at `/admin` and load operational metrics
 * A seller can create a product, show, and auction through the API
 * A buyer can bid, chat, and create a fixed-price order
 * Logs contain no unhandled startup or migration errors
@@ -51,6 +52,10 @@ Copilot must not report success until:
 
 Do not run `npm run db:seed` during production deployment. The seed is limited
 to local development and disposable validation environments.
+
+The administrator portal is available at `/admin`. Production administrators
+must be provisioned through an approved operational process rather than the
+demonstration seed.
 
 ## Required operator inputs
 
@@ -509,6 +514,26 @@ docker compose \
 
 The worker starts scheduled auctions, finalizes expired auctions, creates one
 winning order, removes expired sessions, and publishes pending outbox events.
+
+## Verify administrator access
+
+In a disposable seeded environment, open:
+
+```text
+https://<hostname>/admin
+```
+
+Sign in with `admin@livebid.local` and the configured `SEED_PASSWORD`. Confirm:
+
+* The overview metrics load
+* Users, products, shows, auctions, and orders display
+* User role and status filters work
+* Suspending a disposable user revokes access
+* Reactivating that user restores account status
+* Both changes appear in the audit table
+
+Do not run the seed or use demonstration administrator credentials in
+production.
 
 ## Phase 10: backup and restore readiness
 

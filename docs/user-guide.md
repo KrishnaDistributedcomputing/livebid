@@ -8,7 +8,7 @@ keywords:
   - live auction
   - marketplace
   - seller studio
-estimated_reading_time: 8
+estimated_reading_time: 10
 ---
 
 ## Before you begin
@@ -36,6 +36,8 @@ application.
 The four main views are available in the left navigation rail on a wide screen
 and the bottom navigation bar on a narrow screen.
 
+![LiveBid Discover view with featured auction](images/user-discover.png)
+
 | View       | What you can explore                                               |
 |------------|--------------------------------------------------------------------|
 | Discover   | Featured auction, bid history, live chat, shows, and reminders     |
@@ -52,6 +54,11 @@ on the Discover view by show title, seller, or category.
 > field directly to enter a query.
 
 ## Explore the featured auction
+
+The Discover view keeps the stream, current lot, price, countdown, bid history,
+and bid controls visible in one workspace.
+
+![Featured auction and bidding controls](images/user-auction.png)
 
 1. Open **Discover**.
 2. Review the current lot, price, leading bidder, bid count, and countdown.
@@ -120,6 +127,8 @@ not implemented in this release.
 
 ## Shop the sample market
 
+![Marketplace product grid](images/user-market.png)
+
 1. Open **Market**.
 2. Review each product's seller, condition, and price.
 3. Select the heart icon to exercise the product save control.
@@ -132,6 +141,8 @@ The category and filter controls are visual placeholders in this release.
 
 ## Review the sample order
 
+![Buyer order tracking view](images/user-orders.png)
+
 1. Open **Orders**.
 2. Review the expected delivery date and shipment progress.
 3. Check the carrier, sample tracking number, latest scan, and order total.
@@ -142,6 +153,8 @@ content. **Copy** shows a confirmation but does not write to the system
 clipboard. The order support button is also a presentation element.
 
 ## Explore the seller studio
+
+![Seller studio overview](images/user-studio.png)
 
 1. Open **Studio**, or select **Go live** in the header.
 2. Review the revenue, order, viewer, and conversion sample metrics.
@@ -211,6 +224,7 @@ If the health endpoint fails, follow the troubleshooting steps in the
 
 ## Related guides
 
+* Use the [administrator guide](admin-guide.md) for privileged operations
 * Review the [architecture guide](architecture.md) for implemented and planned
   system boundaries
 * Review the [technical design](technical-design.md) for proposed backend,

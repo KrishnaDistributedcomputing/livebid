@@ -14,6 +14,15 @@ try {
   await client.query("BEGIN");
   const passwordHash = await bcrypt.hash(seedPassword, 12);
 
+  await client.query(
+    `INSERT INTO users (email, username, password_hash, role)
+     VALUES ('admin@livebid.local', 'livebid-admin', $1, 'ADMIN')
+     ON CONFLICT ((lower(email))) DO UPDATE
+     SET username = EXCLUDED.username, password_hash = EXCLUDED.password_hash,
+       role = 'ADMIN', status = 'ACTIVE'`,
+    [passwordHash],
+  );
+
   const seller = await client.query(
     `INSERT INTO users (email, username, password_hash, role)
      VALUES ('seller@livebid.local', 'mayacollects', $1, 'SELLER')
@@ -167,6 +176,111 @@ try {
       );
     }
 
+    const expandedSellers = [
+      {
+        email: "panel-house@livebid.local",
+        username: "panel-house",
+        displayName: "Panel House",
+        description: "Graded comics, complete runs, and independent releases",
+        category: "Comics",
+        products: ["Amazing Fantasy facsimile", "Silver-age space anthology", "Independent creator bundle", "Modern variant cover set"],
+        basePrice: 3600,
+      },
+      {
+        email: "needle-drop@livebid.local",
+        username: "needle-drop",
+        displayName: "Needle Drop",
+        description: "Clean vinyl pressings, box sets, and listening-room finds",
+        category: "Vinyl",
+        products: ["Jazz essentials box", "Japanese city-pop pressing", "Ambient double LP", "Soul singles collection"],
+        basePrice: 4200,
+      },
+      {
+        email: "small-wonders@livebid.local",
+        username: "small-wonders",
+        displayName: "Small Wonders",
+        description: "Designer toys, miniatures, and sealed collectibles",
+        category: "Toys",
+        products: ["Robot vinyl figure", "Miniature city kit", "Sealed adventure figure", "Artist mystery-box set"],
+        basePrice: 5400,
+      },
+      {
+        email: "found-form@livebid.local",
+        username: "found-form",
+        displayName: "Found Form",
+        description: "Vintage jewelry and small sculptural accessories",
+        category: "Jewelry",
+        products: ["Hammered silver cuff", "Geometric pendant", "Enamel studio brooch", "Stacking ring trio"],
+        basePrice: 7600,
+      },
+      {
+        email: "trail-cache@livebid.local",
+        username: "trail-cache",
+        displayName: "Trail Cache",
+        description: "Tested outdoor equipment and compact camp essentials",
+        category: "Outdoors",
+        products: ["Ultralight day pack", "Compact camp stove", "Insulated trail flask", "Weatherproof field blanket"],
+        basePrice: 6800,
+      },
+    ];
+
+    for (const sellerData of expandedSellers) {
+      const sellerUser = await client.query(
+        `INSERT INTO users (email, username, password_hash, role)
+         VALUES ($1, $2, $3, 'SELLER')
+         ON CONFLICT ((lower(email))) DO UPDATE SET username = EXCLUDED.username
+         RETURNING id`,
+        [sellerData.email, sellerData.username, passwordHash],
+      );
+      const profile = await client.query(
+        `INSERT INTO seller_profiles (user_id, display_name, description)
+         VALUES ($1, $2, $3)
+         ON CONFLICT (user_id) DO UPDATE
+         SET display_name = EXCLUDED.display_name, description = EXCLUDED.description
+         RETURNING id`,
+        [sellerUser.rows[0].id, sellerData.displayName, sellerData.description],
+      );
+
+      for (const [index, title] of sellerData.products.entries()) {
+        const price = sellerData.basePrice + index * 1250;
+        await client.query(
+          `INSERT INTO products (
+             seller_id, title, description, category, condition,
+             buy_now_price_minor, auction_start_price_minor, quantity, image_url
+           )
+           SELECT $1, $2, $3, $4, $5, $6, $7, $8, $9
+           WHERE NOT EXISTS (
+             SELECT 1 FROM products WHERE seller_id = $1 AND title = $2
+           )`,
+          [
+            profile.rows[0].id,
+            title,
+            `${title} selected by ${sellerData.displayName}.`,
+            sellerData.category,
+            index % 2 === 0 ? "Excellent" : "Very good",
+            price,
+            index % 2 === 0 ? Math.floor(price * 0.65) : null,
+            index + 1,
+            `https://placehold.co/900x900/151615/d9ff43?text=${encodeURIComponent(title)}`,
+          ],
+        );
+      }
+
+      await client.query(
+        `INSERT INTO shows (seller_id, title, description, scheduled_at, status)
+         SELECT $1, $2, $3, now() + make_interval(hours => $4), 'SCHEDULED'
+         WHERE NOT EXISTS (
+           SELECT 1 FROM shows WHERE seller_id = $1 AND status = 'SCHEDULED'
+         )`,
+        [
+          profile.rows[0].id,
+          `${sellerData.displayName} first-look`,
+          `A guided selection from ${sellerData.displayName}.`,
+          expandedSellers.indexOf(sellerData) + 3,
+        ],
+      );
+    }
+
     await client.query(
       `INSERT INTO shows (seller_id, title, description, scheduled_at, status)
        SELECT $1, $2, $3, now() + interval '1 day', 'SCHEDULED'
@@ -196,6 +310,16 @@ try {
     );
   }
 
+  for (let index = 1; index <= 15; index += 1) {
+    const suffix = String(index).padStart(2, "0");
+    await client.query(
+      `INSERT INTO users (email, username, password_hash, role)
+       VALUES ($1, $2, $3, 'BUYER')
+       ON CONFLICT ((lower(email))) DO UPDATE SET username = EXCLUDED.username`,
+      [`buyer-${suffix}@livebid.local`, `market-buyer-${suffix}`, passwordHash],
+    );
+  }
+
   await client.query(
     `INSERT INTO chat_messages (show_id, user_id, body)
      SELECT $1, u.id, message.body
@@ -215,7 +339,7 @@ try {
   );
 
   await client.query("COMMIT");
-  console.log("Seeded 5 sellers, 5 buyers, 13 products, shows, and sample chat");
+  console.log("Seeded 1 admin, 10 sellers, 20 buyers, 33 products, shows, and sample chat");
   console.log(`Demo buyer ID: ${buyer.rows[0].id}`);
 } catch (error) {
   await client.query("ROLLBACK");

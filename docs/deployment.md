@@ -65,9 +65,9 @@ The visual interface is not connected to these APIs yet. Real payment capture,
 shipping labels, and video streaming remain outside this release.
 
 For local or disposable test environments, run `npm run db:seed` with a
-`SEED_PASSWORD` of at least 12 characters. The idempotent seed creates five
-sellers, five buyers, thirteen products, five shows, an active auction, and
-sample chat. Never seed production.
+`SEED_PASSWORD` of at least 12 characters. The idempotent seed creates one
+administrator, ten sellers, twenty buyers, thirty-three products, shows, an
+active auction, and sample chat. Never seed production.
 
 ## Deploy the source to Vercel
 

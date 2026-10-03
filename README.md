@@ -34,6 +34,7 @@ runtime, health checks, and Docker Compose configurations.
 | Guide                                      | Purpose                                                        |
 |--------------------------------------------|----------------------------------------------------------------|
 | [User guide](docs/user-guide.md)           | Walk through discovery, bidding, shopping, orders, and studio   |
+| [Administrator guide](docs/admin-guide.md) | Operate users, products, shows, auctions, orders, and audit     |
 | [Architecture](docs/architecture.md)       | Review the current prototype and planned platform architecture  |
 | [Technical design](docs/technical-design.md) | Implement modules, data, APIs, reliability, and security      |
 | [Copilot deployment specification](docs/copilot-deployment-spec.md) | Deploy and operate the backend stack with GitHub Copilot |
@@ -168,9 +169,9 @@ pnpm --version
 
 ## Load demonstration data
 
-The idempotent seed command creates five sellers, five buyers, thirteen
-products, five shows, an active auction, and sample chat. Set one temporary
-password for all demonstration accounts:
+The idempotent seed command creates one administrator, ten sellers, twenty
+buyers, thirty-three products, shows, an active auction, and sample chat. Set
+one temporary password for all demonstration accounts:
 
 ```powershell
 $env:DATABASE_URL = "postgresql://livebid:livebid-local-password@localhost:5432/livebid"
@@ -179,10 +180,11 @@ npm run db:migrate
 npm run db:seed
 ```
 
-| Role   | Accounts                                                                       |
-|--------|--------------------------------------------------------------------------------|
-| Seller | `seller`, `sole-room`, `grain-house`, `second-hand`, and `the-edit`            |
-| Buyer  | `demo-buyer`, `collector77`, `patchcollector`, `rookiecardz`, and `mintcondition` |
+| Role          | Example accounts                                                                |
+|---------------|---------------------------------------------------------------------------------|
+| Administrator | `admin@livebid.local`                                                           |
+| Seller        | `seller`, `sole-room`, `grain-house`, `panel-house`, and `trail-cache`          |
+| Buyer         | `demo-buyer`, `collector77`, `patchcollector`, and `market-buyer-01` through `15` |
 
 All account emails use the `@livebid.local` suffix. For example, the SOLE ROOM
 seller signs in as `sole-room@livebid.local`.
