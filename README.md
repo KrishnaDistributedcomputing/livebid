@@ -1,11 +1,11 @@
 ---
-title: LiveBid
+title: "LiveBid: Live Commerce Marketplace"
 description: Live-commerce marketplace with a persistent API and production Docker stack
 ms.date: 2026-10-03
 ms.topic: overview
 ---
 
-## Live commerce, ready to explore
+## LiveBid: Live Commerce Marketplace
 
 LiveBid is a mobile-first live-commerce marketplace prototype. It combines a
 responsive buyer and seller experience with authenticated APIs, PostgreSQL,
