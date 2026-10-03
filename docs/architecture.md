@@ -256,6 +256,8 @@ components and failure handling are implemented and tested.
 ## Related guides
 
 * Follow the [user guide](user-guide.md) to exercise the implemented journeys
+* Use the [technical design](technical-design.md) to plan the persistent
+  marketplace implementation
 * Follow the [deployment guide](deployment.md) to run or publish the application
 * Return to the [repository overview](../README.md) for prerequisites and
   source commands

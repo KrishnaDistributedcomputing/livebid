@@ -34,6 +34,7 @@ runtime, a health endpoint, and a Docker Compose configuration.
 |--------------------------------------------|----------------------------------------------------------------|
 | [User guide](docs/user-guide.md)           | Walk through discovery, bidding, shopping, orders, and studio   |
 | [Architecture](docs/architecture.md)       | Review the current prototype and planned platform architecture  |
+| [Technical design](docs/technical-design.md) | Implement modules, data, APIs, reliability, and security      |
 | [Deployment guide](docs/deployment.md)     | Run and publish LiveBid with Vercel, Docker, GHCR, or Azure      |
 
 ## Architecture at a glance
@@ -55,7 +56,9 @@ flowchart LR
 The planned marketplace adds server-authoritative auctions, persistent data,
 realtime delivery, streaming, payments, and shipping. See the
 [architecture guide](docs/architecture.md) for the current component model,
-interaction sequence, delivery pipeline, and target platform boundary.
+interaction sequence, delivery pipeline, and target platform boundary. The
+[technical design](docs/technical-design.md) defines the proposed
+implementation contracts and quality requirements.
 
 ## Technology
 

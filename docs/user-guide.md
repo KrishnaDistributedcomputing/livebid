@@ -213,6 +213,8 @@ If the health endpoint fails, follow the troubleshooting steps in the
 
 * Review the [architecture guide](architecture.md) for implemented and planned
   system boundaries
+* Review the [technical design](technical-design.md) for proposed backend,
+  data, API, and reliability contracts
 * Follow the [deployment guide](deployment.md) to publish or operate LiveBid
 * Return to the [repository overview](../README.md) for prerequisites,
   validation, and container commands
