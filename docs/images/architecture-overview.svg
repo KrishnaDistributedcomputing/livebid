@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-labelledby="title description">
+  <title id="title">LiveBid system context</title>
+  <desc id="description">Buyers and sellers use a web browser to reach the Next.js application, which serves the React interface, authenticated APIs, health endpoint, and product images. The APIs use PostgreSQL and Redis, PostgreSQL supplies the worker, and the React interface manages demonstration state.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#141714" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#141714"/>
+    </marker>
+    <style>
+      .eyebrow { font: 700 14px Arial, sans-serif; letter-spacing: 2px; fill: #ff5f50; }
+      .heading { font: 800 34px Arial, sans-serif; letter-spacing: -1px; fill: #141714; }
+      .label { font: 700 17px Arial, sans-serif; fill: #141714; }
+      .detail { font: 400 13px Arial, sans-serif; fill: #5d625c; }
+      .box { fill: #ffffff; stroke: #d7dad4; stroke-width: 2; rx: 12; filter: url(#shadow); }
+      .core { fill: #d8ff3e; stroke: #141714; stroke-width: 3; rx: 12; filter: url(#shadow); }
+      .data { fill: #141714; stroke: #141714; stroke-width: 2; rx: 12; filter: url(#shadow); }
+      .data-label { font: 700 17px Arial, sans-serif; fill: #ffffff; }
+      .data-detail { font: 400 13px Arial, sans-serif; fill: #cbd0c8; }
+      .line { fill: none; stroke: #141714; stroke-width: 3; marker-end: url(#arrow); }
+      .branch { fill: none; stroke: #8b9188; stroke-width: 2.5; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1200" height="620" rx="20" fill="#f4f5f1"/>
+  <path d="M0 0 H1200 V620 H0 Z" fill="url(#grid)" opacity="0"/>
+
+  <text x="48" y="54" class="eyebrow">LIVEBID PLATFORM</text>
+  <text x="48" y="92" class="heading">System context</text>
+
+  <path class="line" d="M208 196 H268"/>
+  <path class="line" d="M438 196 H498"/>
+  <path class="branch" d="M698 166 C735 166 735 146 772 146"/>
+  <path class="branch" d="M698 196 H772"/>
+  <path class="branch" d="M698 226 C735 226 735 246 772 246"/>
+  <path class="branch" d="M698 226 C735 226 735 346 772 346"/>
+  <path class="branch" d="M698 226 C735 226 735 446 772 446"/>
+  <path class="branch" d="M956 196 H1000"/>
+  <path class="branch" d="M956 246 C978 246 978 286 1000 286"/>
+  <path class="branch" d="M956 146 C978 146 978 106 1000 106"/>
+  <path class="branch" d="M1090 330 V390"/>
+
+  <rect x="48" y="148" width="160" height="96" class="box"/>
+  <circle cx="84" cy="184" r="16" fill="#ff5f50"/>
+  <circle cx="84" cy="180" r="6" fill="#ffffff"/>
+  <path d="M72 203 C74 191 94 191 96 203" fill="#ffffff"/>
+  <text x="112" y="183" class="label">Buyer or seller</text>
+  <text x="112" y="207" class="detail">Marketplace user</text>
+
+  <rect x="268" y="148" width="170" height="96" class="box"/>
+  <rect x="294" y="174" width="34" height="25" rx="3" fill="none" stroke="#141714" stroke-width="3"/>
+  <path d="M294 181 H328" stroke="#141714" stroke-width="3"/>
+  <text x="346" y="183" class="label">Web browser</text>
+  <text x="346" y="207" class="detail">Desktop or mobile</text>
+
+  <rect x="498" y="136" width="200" height="120" class="core"/>
+  <path d="M526 171 L542 155 L558 171 L542 187 Z" fill="#141714"/>
+  <text x="574" y="178" class="label">Next.js application</text>
+  <text x="526" y="211" class="detail">Interface, API, health, and media</text>
+
+  <rect x="772" y="98" width="184" height="96" class="box"/>
+  <text x="798" y="138" class="label">React interface</text>
+  <text x="798" y="162" class="detail">LiveBid experience</text>
+
+  <rect x="772" y="208" width="184" height="96" class="box"/>
+  <text x="798" y="248" class="label">Authenticated APIs</text>
+  <text x="798" y="272" class="detail">Marketplace operations</text>
+
+  <rect x="772" y="318" width="184" height="96" class="box"/>
+  <text x="798" y="358" class="label">Health endpoint</text>
+  <text x="798" y="382" class="detail">Dependency checks</text>
+
+  <rect x="772" y="428" width="184" height="96" class="box"/>
+  <text x="798" y="468" class="label">Product images</text>
+  <text x="798" y="492" class="detail">Local and remote media</text>
+
+  <rect x="1000" y="58" width="152" height="96" class="box"/>
+  <text x="1022" y="98" class="label">Demo state</text>
+  <text x="1022" y="122" class="detail">Browser memory</text>
+
+  <rect x="1000" y="168" width="152" height="96" class="data"/>
+  <text x="1022" y="208" class="data-label">PostgreSQL</text>
+  <text x="1022" y="232" class="data-detail">Authoritative data</text>
+
+  <rect x="1000" y="278" width="152" height="96" class="data"/>
+  <text x="1022" y="318" class="data-label">Redis</text>
+  <text x="1022" y="342" class="data-detail">Rate limits + events</text>
+
+  <rect x="1000" y="390" width="152" height="96" class="box"/>
+  <text x="1022" y="430" class="label">Worker</text>
+  <text x="1022" y="454" class="detail">Auctions + outbox</text>
+
+  <rect x="48" y="548" width="1104" height="2" fill="#d7dad4"/>
+  <circle cx="58" cy="580" r="6" fill="#d8ff3e" stroke="#141714" stroke-width="2"/>
+  <text x="76" y="585" class="detail">Browser demonstration state is separate from the persistent API and worker services.</text>
+</svg>

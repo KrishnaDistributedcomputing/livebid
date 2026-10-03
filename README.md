@@ -126,19 +126,7 @@ controls, resource monitoring, and audit records.
 
 ## Understand the architecture
 
-```mermaid
-graph LR
-    user["Buyer or seller"] --> browser["Web browser"]
-    browser --> webapp["Next.js application"]
-    webapp --> interface["React LiveBid interface"]
-    webapp --> api["Authenticated API routes"]
-    api --> database["PostgreSQL"]
-    api --> cache["Redis"]
-    database --> worker["Auction and outbox worker"]
-    webapp --> health["Health endpoint"]
-    interface --> state["In-memory demo state"]
-    webapp --> media["Product images"]
-```
+![LiveBid system context showing the browser, Next.js application, APIs, data services, and worker](docs/images/architecture-overview.svg)
 
 The visual marketplace currently keeps its demonstration interactions in the
 browser. The API independently persists accounts, products, shows, auctions,
