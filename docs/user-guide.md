@@ -8,7 +8,7 @@ keywords:
   - live auction
   - marketplace
   - seller studio
-estimated_reading_time: 10
+estimated_reading_time: 12
 ---
 
 ## Before you begin
@@ -102,6 +102,8 @@ value only in local React state. It does not automatically bid on your behalf.
 
 ## Participate in sample chat
 
+![Live auction chat beside current lot and bid controls](images/user-live-chat.png)
+
 1. Open **Discover**.
 2. Select **Live chat** in the auction panel.
 3. Enter a message of up to 180 characters.
@@ -111,6 +113,8 @@ Your message appears at the bottom of the local conversation as the user
 `you`. Empty messages are ignored. Messages disappear when the page reloads.
 
 ## Find shows
+
+![Live and upcoming rooms with category filters](images/user-show-discovery.png)
 
 Use either search or category filters to narrow the show grid:
 
@@ -165,6 +169,8 @@ clipboard. The order support button is also a presentation element.
 The studio does not access your camera or microphone, modify inventory, or
 start a stream. Queue controls and checklist rows demonstrate the intended
 seller experience without backend behavior.
+
+![Seller inventory queue and go-live readiness](images/user-studio-readiness.png)
 
 ## Use notifications and the mobile menu
 

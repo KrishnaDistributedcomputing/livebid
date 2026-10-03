@@ -8,7 +8,7 @@ keywords:
   - operations
   - user management
   - audit
-estimated_reading_time: 12
+estimated_reading_time: 14
 ---
 
 ## Administrator responsibilities
@@ -185,6 +185,8 @@ moderation workflow.
 Open **Shows** to inspect schedules and lifecycle state. A show can be
 scheduled, live, ended, or canceled.
 
+![Administrator show schedule and lifecycle state](images/admin-shows.png)
+
 Open **Auctions** to inspect:
 
 * Product and seller
@@ -196,9 +198,13 @@ Open **Auctions** to inspect:
 The displayed sequence helps diagnose realtime gaps. Private maximum bids are
 never exposed through administrator resource responses.
 
+![Administrator auction monitoring table](images/admin-auctions.png)
+
 ## Review orders
 
 Open **Orders** to inspect fixed-price and auction-winner orders.
+
+![Administrator order operations table](images/admin-orders.png)
 
 The table includes buyer, seller, total, payment status, fulfillment status,
 and creation time. The current MVP uses `NOT_REQUIRED` for payment because a

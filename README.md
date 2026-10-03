@@ -91,9 +91,33 @@ Password: LiveBidDemoPassword123
 
 ## See the product
 
-| Marketplace experience | Administrator operations |
-|------------------------|--------------------------|
-| ![Marketplace catalog](docs/images/user-market.png) | ![Administrator dashboard](docs/images/admin-overview.png) |
+### Buyer and seller experience
+
+| Live auction and chat | Show discovery |
+|-----------------------|----------------|
+| ![Live auction chat and bidding controls](docs/images/user-live-chat.png) | ![Live and upcoming show discovery](docs/images/user-show-discovery.png) |
+
+| Marketplace catalog | Order tracking |
+|---------------------|----------------|
+| ![Marketplace product catalog](docs/images/user-market.png) | ![Buyer shipment and order tracking](docs/images/user-orders.png) |
+
+| Seller overview | Show readiness |
+|-----------------|----------------|
+| ![Seller studio overview](docs/images/user-studio.png) | ![Seller inventory queue and room readiness](docs/images/user-studio-readiness.png) |
+
+### Administrator operations
+
+| Operations overview | User management |
+|---------------------|-----------------|
+| ![Administrator operations dashboard](docs/images/admin-overview.png) | ![Administrator user management](docs/images/admin-users.png) |
+
+| Show schedule | Auction monitoring |
+|---------------|--------------------|
+| ![Administrator show schedule](docs/images/admin-shows.png) | ![Administrator auction monitoring](docs/images/admin-auctions.png) |
+
+| Order operations | Audit history |
+|------------------|---------------|
+| ![Administrator order operations](docs/images/admin-orders.png) | ![Administrator audit history](docs/images/admin-audit.png) |
 
 The [end-user guide](docs/user-guide.md) includes discovery, auction,
 marketplace, order, and studio screenshots. The
