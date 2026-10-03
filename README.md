@@ -126,7 +126,7 @@ controls, resource monitoring, and audit records.
 
 ## Understand the architecture
 
-![LiveBid system context showing the browser, Next.js application, APIs, data services, and worker](docs/images/architecture-overview.svg)
+![LiveBid system context showing the browser, Next.js application, APIs, data services, and worker](docs/images/architecture-overview.png)
 
 The visual marketplace currently keeps its demonstration interactions in the
 browser. The API independently persists accounts, products, shows, auctions,
