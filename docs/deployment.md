@@ -1,7 +1,7 @@
 ---
 title: LiveBid deployment guide
 description: Step-by-step source and container deployment instructions for LiveBid
-ms.date: 2026-10-02
+ms.date: 2026-10-03
 ms.topic: how-to
 keywords:
   - next.js
@@ -15,13 +15,14 @@ estimated_reading_time: 12
 
 | Goal                                  | Recommended path                     |
 |---------------------------------------|--------------------------------------|
-| Preview the source with managed CI/CD | Vercel                               |
+| Preview the visual interface          | Vercel with external data services   |
 | Run the existing production image     | Docker Compose                       |
-| Host a public managed container       | Azure Container Apps                 |
+| Run the complete backend stack        | Docker Compose on a Linux host       |
 | Host on a virtual machine             | Docker on a Linux host               |
 
-The application listens on container port `3000`. The production image already
-contains a Docker health check that calls `/api/health`.
+The application listens on container port `3000`. The production image includes
+a Docker health check that verifies `/api/health`, PostgreSQL, and Redis. A
+second container runs auction finalization and outbox publication.
 
 ## Prepare the repository
 
@@ -44,8 +45,29 @@ git commit -m "feat: update LiveBid application"
 git push origin main
 ```
 
-Never commit `.env` files, access tokens, registry passwords, or provider
-credentials. The current prototype does not require runtime secrets.
+Never commit `.env` files, access tokens, database passwords, registry
+passwords, or provider credentials. Copy `.env.production.example` to a
+host-only `.env` file and replace every placeholder before production use.
+
+## Understand the backend boundary
+
+The deployed backend supports:
+
+* Email and password accounts with hashed passwords and HTTP-only sessions
+* Seller products, shows, and auction creation
+* Server-authoritative bids with idempotency and anti-sniping
+* Persistent chat with Redis rate limiting
+* Atomic fixed-price orders and auction-winner orders
+* PostgreSQL migrations and seeded demonstration data
+* Auction activation, finalization, session cleanup, and outbox publication
+
+The visual interface is not connected to these APIs yet. Real payment capture,
+shipping labels, and video streaming remain outside this release.
+
+For local or disposable test environments, run `npm run db:seed` with a
+`SEED_PASSWORD` of at least 12 characters. The idempotent seed creates five
+sellers, five buyers, thirteen products, five shows, an active auction, and
+sample chat. Never seed production.
 
 ## Deploy the source to Vercel
 
@@ -62,7 +84,8 @@ Vercel builds and hosts the Next.js source directly from GitHub.
 
 5. Keep the root directory set to the repository root.
 
-6. Leave environment variables empty for this prototype.
+6. Configure external PostgreSQL and Redis services and set `DATABASE_URL`,
+   `REDIS_URL`, `APP_ORIGIN`, and the session settings.
 
 7. Select **Deploy**.
 
@@ -70,8 +93,9 @@ Vercel builds and hosts the Next.js source directly from GitHub.
 
 9. Verify the health endpoint by appending `/api/health` to that URL.
 
-Every later push to `main` creates a production deployment. Pull requests
-receive isolated preview deployments.
+Vercel does not run the long-lived auction worker from this repository.
+Use Docker Compose for the complete backend stack, or deploy the worker on a
+separate managed container service.
 
 The same deployment can be created from a terminal:
 
@@ -136,34 +160,51 @@ The production Compose file pulls the published image instead of building it.
    cd livebid
    ```
 
-2. Pull and start the current image:
+2. Create the production environment file:
 
    ```bash
-   docker compose -f compose.production.yaml pull
-   docker compose -f compose.production.yaml up --detach --wait
+   cp .env.production.example .env
+   chmod 600 .env
    ```
 
-3. Verify the deployment:
+3. Replace all placeholder secrets and set `APP_ORIGIN` to the public HTTPS
+   origin. Keep the PostgreSQL and Redis passwords synchronized with their
+   respective connection URLs.
+
+4. Validate the resolved configuration:
+
+   ```bash
+   docker compose --env-file .env -f compose.production.yaml config --quiet
+   ```
+
+5. Pull and start the current image:
+
+   ```bash
+   docker compose --env-file .env -f compose.production.yaml pull
+   docker compose --env-file .env -f compose.production.yaml up --detach --wait
+   ```
+
+6. Verify the deployment:
 
    ```bash
    docker compose -f compose.production.yaml ps
    curl --fail http://127.0.0.1:3001/api/health
    ```
 
-4. Review logs:
+7. Review logs:
 
    ```bash
    docker compose -f compose.production.yaml logs --follow livebid
    ```
 
-5. Update to a newly published image:
+8. Update to a newly published image:
 
    ```bash
    docker compose -f compose.production.yaml pull
    docker compose -f compose.production.yaml up --detach --wait
    ```
 
-6. Stop the deployment:
+9. Stop the deployment:
 
    ```bash
    docker compose -f compose.production.yaml down

@@ -1,4 +1,33 @@
 services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-livebid}
+      POSTGRES_USER: ${POSTGRES_USER:-livebid}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-livebid} -d ${POSTGRES_DB:-livebid}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:?Set REDIS_PASSWORD}"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a $$REDIS_PASSWORD ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD}
+    restart: unless-stopped
+
   livebid:
     image: ${LIVEBID_IMAGE:-ghcr.io/krishnadistributedcomputing/livebid:latest}
     pull_policy: always
@@ -7,4 +36,33 @@ services:
     environment:
       NODE_ENV: production
       NEXT_TELEMETRY_DISABLED: "1"
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL}
+      REDIS_URL: ${REDIS_URL:?Set REDIS_URL}
+      APP_ORIGIN: ${APP_ORIGIN:?Set APP_ORIGIN}
+      SESSION_COOKIE_NAME: ${SESSION_COOKIE_NAME:-livebid_session}
+      SESSION_TTL_HOURS: ${SESSION_TTL_HOURS:-168}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
+
+  worker:
+    image: ${LIVEBID_IMAGE:-ghcr.io/krishnadistributedcomputing/livebid:latest}
+    pull_policy: always
+    command: ["sh", "-c", "node scripts/migrate.mjs && node scripts/worker.mjs"]
+    healthcheck:
+      disable: true
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL}
+      REDIS_URL: ${REDIS_URL:?Set REDIS_URL}
+    depends_on:
+      livebid:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  redis-data:

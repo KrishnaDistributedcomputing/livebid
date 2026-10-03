@@ -1,6 +1,6 @@
 ---
 title: LiveBid
-description: Interactive live-commerce marketplace prototype with a production Docker image
+description: Live-commerce marketplace with a persistent API and production Docker stack
 ms.date: 2026-10-03
 ms.topic: overview
 ---
@@ -19,14 +19,15 @@ journey in a responsive Next.js application:
 * Review purchases and fulfillment status
 * Navigate a seller studio preview
 
-The repository includes a multi-stage Docker build, a non-root production
-runtime, a health endpoint, and a Docker Compose configuration.
+The repository includes a PostgreSQL and Redis backend, authenticated API
+routes, an auction worker, a multi-stage Docker build, a non-root production
+runtime, health checks, and Docker Compose configurations.
 
 > [!IMPORTANT]
-> This version is an interactive front-end prototype. Auction, chat, cart, and
-> account state are held in the browser. It does not yet include persistent
-> users, PostgreSQL, Redis, payments, shipping, or a streaming provider. Do not
-> use it to process real bids or purchases.
+> The visual interface remains a browser-held demonstration and is not yet
+> connected to the backend API. The API persists accounts, catalog data, shows,
+> auctions, chat, and orders. Real payments, shipping, and streaming providers
+> are not included, so do not use this release for financial transactions.
 
 ## Documentation
 
@@ -35,19 +36,23 @@ runtime, a health endpoint, and a Docker Compose configuration.
 | [User guide](docs/user-guide.md)           | Walk through discovery, bidding, shopping, orders, and studio   |
 | [Architecture](docs/architecture.md)       | Review the current prototype and planned platform architecture  |
 | [Technical design](docs/technical-design.md) | Implement modules, data, APIs, reliability, and security      |
+| [Copilot deployment specification](docs/copilot-deployment-spec.md) | Deploy and operate the backend stack with GitHub Copilot |
 | [Deployment guide](docs/deployment.md)     | Run and publish LiveBid with Vercel, Docker, GHCR, or Azure      |
 
 ## Architecture at a glance
 
-The current release is a client-side prototype delivered by one Next.js
-application. React owns the demo state in memory, while the health route
-provides a deployment probe.
+The current release combines the existing client-side demonstration with a
+persistent API and worker deployment.
 
 ```mermaid
 flowchart LR
     User["Buyer or seller"] --> Browser["Web browser"]
     Browser --> Next["Next.js application"]
     Next --> UI["React LiveBid interface"]
+    Next --> API["Authenticated API routes"]
+    API --> PostgreSQL["PostgreSQL"]
+    API --> Redis["Redis"]
+    PostgreSQL --> Worker["Auction and outbox worker"]
     Next --> Health["GET /api/health"]
     UI --> Memory["In-memory demo state"]
     Next --> Media["Local and remote images"]
@@ -64,8 +69,11 @@ implementation contracts and quality requirements.
 
 | Layer            | Implementation                         |
 |------------------|----------------------------------------|
-| Application      | Next.js 16 App Router                  |
-| User interface   | React 19, TypeScript, Tailwind CSS 4   |
+| Application      | Next.js 15 App Router                  |
+| User interface   | React 19.1, TypeScript, Tailwind CSS 4 |
+| Database         | PostgreSQL 17                          |
+| Cache and events | Redis 7.4                              |
+| Authentication   | Password hashing and HTTP-only sessions |
 | Icons            | Lucide React                           |
 | Package manager  | pnpm 10.18.3                           |
 | Container        | Node.js 24 Alpine, standalone Next.js  |
@@ -76,11 +84,14 @@ implementation contracts and quality requirements.
 ```text
 livebid/
 |-- .github/workflows/       Container build and GHCR publishing
-|-- docs/                    Architecture, user, and deployment guides
+|-- db/migrations/           Versioned PostgreSQL schema
+|-- docs/                    Architecture, user, design, and deployment guides
 |-- public/                  Static product media
+|-- scripts/                 Migration, seed, and worker processes
 |-- src/
-|   |-- app/                 Next.js routes, layout, styles, and health API
-|   `-- components/          Interactive LiveBid application
+|   |-- app/                 Next.js pages and backend API routes
+|   |-- components/          Interactive LiveBid application
+|   `-- lib/                 Database, Redis, auth, validation, and auctions
 |-- compose.yaml             Local container orchestration
 |-- compose.production.yaml  Published-image deployment
 |-- Dockerfile               Multi-stage production image
@@ -93,7 +104,7 @@ livebid/
 
 Install the following tools before running the project:
 
-* [Node.js 24](https://nodejs.org/)
+* [Node.js 20 or newer](https://nodejs.org/)
 * [pnpm 10.18.3](https://pnpm.io/installation)
 * [Docker Desktop](https://www.docker.com/products/docker-desktop/) for the
   container workflow
@@ -155,6 +166,31 @@ pnpm --version
 
 6. Stop the development server with `Ctrl+C`.
 
+## Load demonstration data
+
+The idempotent seed command creates five sellers, five buyers, thirteen
+products, five shows, an active auction, and sample chat. Set one temporary
+password for all demonstration accounts:
+
+```powershell
+$env:DATABASE_URL = "postgresql://livebid:livebid-local-password@localhost:5432/livebid"
+$env:SEED_PASSWORD = "ReplaceWithDemoPassword123"
+npm run db:migrate
+npm run db:seed
+```
+
+| Role   | Accounts                                                                       |
+|--------|--------------------------------------------------------------------------------|
+| Seller | `seller`, `sole-room`, `grain-house`, `second-hand`, and `the-edit`            |
+| Buyer  | `demo-buyer`, `collector77`, `patchcollector`, `rookiecardz`, and `mintcondition` |
+
+All account emails use the `@livebid.local` suffix. For example, the SOLE ROOM
+seller signs in as `sole-room@livebid.local`.
+
+> [!WARNING]
+> Seed data is intended for local development and disposable test
+> environments. Do not run the seed command in production.
+
 ## Validate the source build
 
 Run the same checks used before publishing changes:
@@ -174,9 +210,9 @@ The optimized server listens on <http://localhost:3000> by default.
 
 ## Run with Docker Compose
 
-Docker Compose builds the image, starts the application, and waits for its
-health check. The default host port is `3001`, which avoids conflicts with a
-local Next.js development server on port `3000`.
+Docker Compose builds the image and starts PostgreSQL, Redis, the application,
+and the auction worker. The default host port is `3001`, which avoids conflicts
+with a local Next.js development server on port `3000`.
 
 1. Start Docker Desktop.
 
